@@ -1,0 +1,78 @@
+body, html {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	font-family: Arial, sans-serif;
+}
+
+#app {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+#input-container {
+	flex-grow: 1;
+	display: flex;
+	overflow: hidden;
+}
+
+#input-area {
+	flex: 0 0 70%;
+	resize: none;
+	border: none;
+	outline: none;
+	padding: 10px;
+	font-family: monospace;
+	font-size: 16px;
+	line-height: 1.5;
+	overflow-y: auto;
+}
+
+#results-area {
+	flex: 0 0 30%;
+	overflow-y: auto;
+	padding: 10px;
+	font-family: monospace;
+	font-size: 16px;
+	line-height: 1.5;
+	border-left: 1px solid #ccc;
+}
+
+.result {
+	color: #0066cc;
+	text-align: left;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}
+
+.error {
+	color: #d00;
+	text-align: left;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}
+
+.loading {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	font-size: 24px;
+}
+
+.spinner {
+	border: 5px solid #f3f3f3;
+	border-top: 5px solid #3498db;
+	border-radius: 50%;
+	width: 50px;
+	height: 50px;
+	animation: spin 1s linear infinite;
+	margin-left: 20px;
+}
+
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
