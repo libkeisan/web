@@ -42,6 +42,7 @@ class App extends Component {
       ctx: null,
     };
     this.inputRef = preact.createRef();
+    this.throttleTimeout = null;
   }
 
   getRates = async () => {
@@ -110,37 +111,47 @@ class App extends Component {
   }
 
   componentWillUnmount = () => {
+    if (this.throttleTimeout) clearTimeout(this.throttleTimeout);
     if (this.state.wasm && this.state.ctx) {
       this.state.wasm.ks_free(this.state.ctx);
     }
   }
 
-  handleInput = (event) => {
-    const input = event.target.value;
-    const lines = input.split('\n');
+  processLine = (line) => {
+    if (!line.trim()) return { type: 'result', value: '' };
+
     const { wasm, ctx } = this.state;
 
-    const results = lines.map(line => {
-      if (!line.trim()) return { type: 'result', value: '' };
+    const inputPtr = allocateString(wasm, line);
+    const res = wasm.ks_evaluate(ctx, inputPtr);
+    wasm.wasm_free(inputPtr);
 
-      const inputPtr = allocateString(wasm, line);
-      const res = wasm.ks_evaluate(ctx, inputPtr);
-      wasm.wasm_free(inputPtr);
+    const memory = new DataView(wasm.memory.buffer);
 
-      const memory = new DataView(wasm.memory.buffer);
+    if (res) {
+      const errPtr = memory.getUint32(ctx + 4, true);
+      return { type: 'error', value: readNullTerminatedString(wasm, errPtr) };
+    }
 
-      if (res) {
-        const errPtr = memory.getUint32(ctx + 4, true);
-        return { type: 'error', value: readNullTerminatedString(wasm, errPtr) };
-      }
+    const valuesPtr = memory.getUint32(ctx, true);
+    const resultPtr = memory.getUint32(valuesPtr, true);
+    const resultValue = readNullTerminatedString(wasm, resultPtr);
+    return { type: 'result', value: resultValue };
+  }
 
-      const valuesPtr = memory.getUint32(ctx, true);
-      const resultPtr = memory.getUint32(valuesPtr, true);
-      const resultValue = readNullTerminatedString(wasm, resultPtr);
-      return { type: 'result', value: resultValue };
-    });
+  handleInput = (event) => {
+    const input = event.target.value;
+    this.setState({ input });
 
-    this.setState({ input, results });
+    if (this.throttleTimeout) {
+      clearTimeout(this.throttleTimeout);
+    }
+
+    this.throttleTimeout = setTimeout(() => {
+      const lines = input.split('\n');
+      const results = lines.map(this.processLine);
+      this.setState({ results });
+    }, 100);
   };
 
   render() {
