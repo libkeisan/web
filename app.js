@@ -108,21 +108,6 @@ class App extends Component {
     return { count, values, errors };
   };
 
-  processLine = (line) => {
-    if (!line.trim()) return { type: "result", value: "" };
-
-    const { wasm, ctx } = this.state;
-
-    const cstr = wasm.stringToNewUTF8(line);
-    wasm._api_evaluate(ctx, cstr);
-    wasm._free(cstr);
-
-    const { count, values, errors } = this.parseContext(ctx);
-    if (count === 0) return { type: "result", value: "" };
-    if (errors[0]) return { type: "error", value: values[0] };
-    return { type: "result", value: values[0] };
-  };
-
   handleInput = (event) => {
     const input = event.target.value;
     this.setState({ input });
@@ -132,8 +117,17 @@ class App extends Component {
     }
 
     this.throttleTimeout = setTimeout(() => {
-      const lines = input.split("\n");
-      const results = lines.map(this.processLine);
+      const { wasm, ctx } = this.state;
+
+      const cstr = wasm.stringToNewUTF8(input);
+      wasm._api_evaluate(ctx, cstr);
+      wasm._free(cstr);
+
+      const { values, errors } = this.parseContext(ctx);
+      const results = values.map((value, i) => {
+        return { type: errors[i] ? "error" : "result", value };
+      });
+
       this.setState({ results });
     }, 100);
   };
