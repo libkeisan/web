@@ -950,31 +950,31 @@ function dbg(...args) {
 // === Body ===
 
 var ASM_CONSTS = {
-  74044: ($0) => { const str = store.get($0); return lengthBytesUTF8(str); },  
- 74104: ($0, $1, $2) => { const str = store.get($0); stringToUTF8(str, $1, $2 + 1); store.del($0); },  
- 74181: ($0) => { return store.dup($0); },  
- 74207: ($0) => { store.del($0); },  
- 74226: ($0) => { const str = UTF8ToString($0); return store.set({ type: str }); },  
- 74293: ($0, $1) => { const token = store.get($0); if (!token) return; HEAP32[(($1) >> 2) + 0] = store.set(token.type); },  
- 74395: ($0, $1) => { const token = store.get($0); if (!token) { HEAP32[(($1) >> 2) + 0] = 0; return; } HEAP32[(($1) >> 2) + 0] = 1; HEAP32[(($1) >> 2) + 1] = store.set(token.type); HEAP32[(($1) >> 2) + 2] = store.set(token.value); },  
- 74609: ($0, $1, $2) => { const render = store.get($0); const value = store.get($1); if (typeof render !== "function") { HEAP32[(($2) >> 2) + 0] = 0; return; } let ret = ""; if (typeof value !== "undefined" && value !== null) { ret = render(value); } HEAP32[(($2) >> 2) + 0] = 1; HEAP32[(($2) >> 2) + 1] = store.set(ret); },  
- 74909: ($0, $1, $2, $3) => { const exports = store.get($0) || {}; const action = exports.action; if (typeof action !== "function") return; const rule = UTF8ToString($1); const tokens = store.get($2); try { const res = action(rule, tokens); HEAP32[(($3) >> 2) + 0] = 1; HEAP32[(($3) >> 2) + 1] = store.set(res); } catch (e) { HEAP32[(($3) >> 2) + 0] = 0; HEAP32[(($3) >> 2) + 1] = store.set(e.message); } },  
- 75288: ($0, $1) => { const entry = Object.entries(plugins || {})[$0]; const name = entry[0]; const plugin = entry[1]; if (!plugin) { HEAP32[(($1) >> 2) + 0] = 0; return; } HEAP32[(($1) >> 2) + 0] = 1; HEAP32[(($1) >> 2) + 1] = store.set(name); HEAP32[(($1) >> 2) + 2] = store.set(plugin); },  
- 75560: ($0) => { const exports = store.get($0); const tokens = exports.tokens || {}; return Object.keys(tokens).length; },  
- 75667: ($0, $1, $2) => { const exports = store.get($0); const tokens = exports.tokens || {}; const name = Object.keys(tokens)[$1]; const token = tokens[name]; if (!token) { HEAP32[(($2) >> 2) + 0] = 0; return; } HEAP32[(($2) >> 2) + 0] = 1; HEAP32[(($2) >> 2) + 1] = store.set(name); HEAP32[(($2) >> 2) + 2] = store.set(token.render); },  
- 75981: ($0) => { const exports = store.get($0); return (exports?.rules || []).length; },  
- 76054: ($0, $1, $2) => { const exports = store.get($0); const rule = exports.rules[$1]; switch (typeof rule) { case "string": HEAP32[(($2) >> 2) + 0] = store.set(rule); return; case "object": { if (typeof rule.str !== "string") return; HEAP32[(($2) >> 2) + 0] = store.set(rule.str); HEAP32[(($2) >> 2) + 1] = typeof rule.before === "string" ? store.set(rule.before) : -1; HEAP32[(($2) >> 2) + 2] = typeof rule.after === "string" ? store.set(rule.after) : -1; } } },  
- 76496: () => { const arr = []; return store.set(arr); },  
- 76539: ($0, $1) => { const arr = store.get($0); arr.push(store.get($1)); },  
- 76595: ($0) => { const str = UTF8ToString($0); return store.set(str); },  
- 76652: ($0, $1) => { const obj = {}; obj.type = UTF8ToString($0); obj.value = store.get($1); store.del($1); return store.set(obj); },  
- 76766: ($0, $1, $2, $3) => { const num = {}; num.value = $0; num.is_percent = ($1 === 1); num.merged_minus = ($2 === 1); HEAP32[($3) >> 2] = store.set(num); },  
- 76898: ($0) => { const arr = store.get($0); return arr.length; },  
- 76948: ($0, $1) => { const arr = store.get($0); return store.set(arr[$1]); },  
- 77006: ($0, $1) => { const obj = store.get($0); if (!obj) return; HEAP32[(($1) >> 2) + 0] = store.set(obj.type); HEAP32[(($1) >> 2) + 1] = store.set(obj.value); },  
- 77150: ($0, $1, $2) => { const obj = store.get($0); store.del($0); if (!obj || typeof obj !== "object" || typeof obj.value !== "number") { HEAP32[($1) >> 2] = 1; return; } HEAP32[(($1) >> 2) + 0] = 0; HEAP32[(($1) >> 2) + 1] = obj.is_percent ? 1 : 0; HEAP32[(($1) >> 2) + 2] = obj.merged_minus ? 1 : 0; HEAPF64[($2) >> 3] = obj.value; }
+  74076: ($0) => { const str = store.get($0); return lengthBytesUTF8(str); },  
+ 74136: ($0, $1, $2) => { const str = store.get($0); stringToUTF8(str, $1, $2 + 1); store.del($0); },  
+ 74213: ($0) => { return store.dup($0); },  
+ 74239: ($0) => { store.del($0); },  
+ 74258: ($0) => { const str = UTF8ToString($0); return store.set({ type: str }); },  
+ 74325: ($0, $1) => { const token = store.get($0); if (!token) return; HEAP32[(($1) >> 2) + 0] = store.set(token.type); },  
+ 74427: ($0, $1) => { const token = store.get($0); if (!token) { HEAP32[(($1) >> 2) + 0] = 0; return; } HEAP32[(($1) >> 2) + 0] = 1; HEAP32[(($1) >> 2) + 1] = store.set(token.type); HEAP32[(($1) >> 2) + 2] = store.set(token.value); },  
+ 74641: ($0, $1, $2) => { const render = store.get($0); const value = store.get($1); if (typeof render !== "function") { HEAP32[(($2) >> 2) + 0] = 0; return; } let ret = ""; if (typeof value !== "undefined" && value !== null) { ret = render(value); } HEAP32[(($2) >> 2) + 0] = 1; HEAP32[(($2) >> 2) + 1] = store.set(ret); },  
+ 74941: ($0, $1, $2, $3) => { const exports = store.get($0) || {}; const action = exports.action; if (typeof action !== "function") return; const rule = UTF8ToString($1); const tokens = store.get($2); try { const res = action(rule, tokens); HEAP32[(($3) >> 2) + 0] = 1; HEAP32[(($3) >> 2) + 1] = store.set(res); } catch (e) { HEAP32[(($3) >> 2) + 0] = 0; HEAP32[(($3) >> 2) + 1] = store.set(e.message); } },  
+ 75320: ($0, $1) => { const entry = Object.entries(plugins || {})[$0]; const name = entry[0]; const plugin = entry[1]; if (!plugin) { HEAP32[(($1) >> 2) + 0] = 0; return; } HEAP32[(($1) >> 2) + 0] = 1; HEAP32[(($1) >> 2) + 1] = store.set(name); HEAP32[(($1) >> 2) + 2] = store.set(plugin); },  
+ 75592: ($0) => { const exports = store.get($0); const tokens = exports.tokens || {}; return Object.keys(tokens).length; },  
+ 75699: ($0, $1, $2) => { const exports = store.get($0); const tokens = exports.tokens || {}; const name = Object.keys(tokens)[$1]; const token = tokens[name]; if (!token) { HEAP32[(($2) >> 2) + 0] = 0; return; } HEAP32[(($2) >> 2) + 0] = 1; HEAP32[(($2) >> 2) + 1] = store.set(name); HEAP32[(($2) >> 2) + 2] = store.set(token.render); },  
+ 76013: ($0) => { const exports = store.get($0); return (exports?.rules || []).length; },  
+ 76086: ($0, $1, $2) => { const exports = store.get($0); const rule = exports.rules[$1]; switch (typeof rule) { case "string": HEAP32[(($2) >> 2) + 0] = store.set(rule); return; case "object": { if (typeof rule.str !== "string") return; HEAP32[(($2) >> 2) + 0] = store.set(rule.str); HEAP32[(($2) >> 2) + 1] = typeof rule.before === "string" ? store.set(rule.before) : -1; HEAP32[(($2) >> 2) + 2] = typeof rule.after === "string" ? store.set(rule.after) : -1; } } },  
+ 76528: () => { const arr = []; return store.set(arr); },  
+ 76571: ($0, $1) => { const arr = store.get($0); arr.push(store.get($1)); },  
+ 76627: ($0) => { const str = UTF8ToString($0); return store.set(str); },  
+ 76684: ($0, $1) => { const obj = {}; obj.type = UTF8ToString($0); obj.value = store.get($1); store.del($1); return store.set(obj); },  
+ 76798: ($0, $1, $2, $3) => { const num = {}; num.value = $0; num.is_percent = ($1 === 1); num.merged_minus = ($2 === 1); HEAP32[($3) >> 2] = store.set(num); },  
+ 76930: ($0) => { const arr = store.get($0); return arr?.length || 0; },  
+ 76986: ($0, $1) => { const arr = store.get($0); return store.set(arr[$1]); },  
+ 77044: ($0, $1) => { const obj = store.get($0); if (!obj) return; HEAP32[(($1) >> 2) + 0] = store.set(obj.type); HEAP32[(($1) >> 2) + 1] = store.set(obj.value); },  
+ 77188: ($0, $1, $2) => { const obj = store.get($0); store.del($0); if (!obj || typeof obj !== "object" || typeof obj.value !== "number") { HEAP32[($1) >> 2] = 1; return; } HEAP32[(($1) >> 2) + 0] = 0; HEAP32[(($1) >> 2) + 1] = obj.is_percent ? 1 : 0; HEAP32[(($1) >> 2) + 2] = obj.merged_minus ? 1 : 0; HEAPF64[($2) >> 3] = obj.value; }
 };
-function count_plugins() { return Object.keys(plugins || {}).length; }
+function count_plugins() { try { return Object.keys(plugins || {}).length; } catch (e) { return 0; } }
 
 // end include: preamble.js
 
