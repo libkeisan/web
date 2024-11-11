@@ -1,4 +1,4 @@
-import module from "./libkeisan.mjs";
+import Keisan from "./libkeisan.mjs";
 
 import datetime from "./plugins/datetime.mjs";
 import unit from "./plugins/unit.mjs";
@@ -7,48 +7,6 @@ import percent from "./plugins/percent.mjs";
 const { h, render, Component } = preact;
 const html = htm.bind(h);
 
-class Store {
-  constructor() {
-    this.store = {};
-    this.storeId = 0;
-  }
-
-  set(value) {
-    if (value === undefined) return;
-    this.store[this.storeId] = value;
-    return this.storeId++;
-  }
-
-  get(id) {
-    return this.store[id];
-  }
-
-  del(id) {
-    delete this.store[id];
-  }
-
-  dup(id) {
-    const value = this.store[id];
-    return this.set(value);
-  }
-
-  print() {
-    console.log(this.store);
-  }
-}
-
-globalThis.plugins = {
-  datetime,
-  unit,
-  percent,
-};
-
-globalThis.store = new Store();
-
-globalThis.keisan = {
-  log: console.log,
-};
-
 class App extends Component {
   constructor() {
     super();
@@ -56,22 +14,21 @@ class App extends Component {
       input: "",
       results: [],
       loading: true,
-      wasm: null,
-      ctx: null,
+      keisan: null,
     };
     this.inputRef = preact.createRef();
     this.throttleTimeout = null;
   }
 
-  initWasm = async () => {
-    const wasm = await module();
-    const ctx = wasm._api_new();
-    this.setState({ wasm, ctx });
+  initWasm = () => {
+    const keisan = new Keisan();
+    keisan.registerPlugins({ datetime, unit, percent });
+    this.setState({ keisan });
   };
 
-  componentDidMount = async () => {
+  componentDidMount = () => {
     try {
-      await this.initWasm();
+      this.initWasm();
       this.setState({ loading: false });
     } catch (error) {
       console.error("Error initializing:", error);
@@ -80,32 +37,9 @@ class App extends Component {
 
   componentWillUnmount = () => {
     if (this.throttleTimeout) clearTimeout(this.throttleTimeout);
-    if (this.state.wasm) {
-      this.state.wasm._api_free(this.state.ctx);
+    if (this.state.keisan) {
+      this.state.keisan.free();
     }
-  };
-
-  parseContext = () => {
-    const { wasm, ctx } = this.state;
-
-    const count = wasm.getValue(ctx, "i32");
-    const valuesPtr = wasm.getValue(ctx + 4, "i32");
-    const errorsPtr = wasm.getValue(ctx + 8, "i32");
-
-    const values = [];
-    for (let i = 0; i < count; i++) {
-      const valuePtr = wasm.getValue(valuesPtr + i * 4, "i32");
-      const value = wasm.UTF8ToString(valuePtr);
-      values.push(value);
-    }
-
-    const errors = [];
-    for (let i = 0; i < count; i++) {
-      const error = wasm.getValue(errorsPtr + i, "i8");
-      errors.push(Boolean(error));
-    }
-
-    return { count, values, errors };
   };
 
   handleInput = (event) => {
@@ -117,13 +51,9 @@ class App extends Component {
     }
 
     this.throttleTimeout = setTimeout(() => {
-      const { wasm, ctx } = this.state;
+      const { keisan } = this.state;
 
-      const cstr = wasm.stringToNewUTF8(input);
-      wasm._api_evaluate(ctx, cstr);
-      wasm._free(cstr);
-
-      const { values, errors } = this.parseContext(ctx);
+      const { values, errors } = keisan.evaluate(input);
       const results = values.map((value, i) => {
         return { type: errors[i] ? "error" : "result", value };
       });
