@@ -3,6 +3,7 @@ import Keisan from "./libkeisan.mjs";
 import datetime from "./plugins/datetime.mjs";
 import unit from "./plugins/unit.mjs";
 import percent from "./plugins/percent.mjs";
+import currency from "./plugins/currency.mjs";
 
 const { h, render, Component } = preact;
 const html = htm.bind(h);
@@ -22,7 +23,7 @@ class App extends Component {
 
   initWasm = () => {
     const keisan = new Keisan();
-    keisan.registerPlugins({ datetime, unit, percent });
+    keisan.registerPlugins({ datetime, unit, percent, currency });
     this.setState({ keisan });
   };
 
