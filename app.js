@@ -1,9 +1,4 @@
-import Keisan from "./libkeisan.mjs";
-
-import datetime from "./plugins/datetime.mjs";
-import unit from "./plugins/unit.mjs";
-import percent from "./plugins/percent.mjs";
-import currency from "./plugins/currency.mjs";
+import init, { Keisan } from "./libkeisan.js";
 
 const { h, render, Component } = preact;
 const html = htm.bind(h);
@@ -21,15 +16,33 @@ class App extends Component {
     this.throttleTimeout = null;
   }
 
-  initWasm = () => {
+  initWasm = async () => {
+    await init({
+      module_or_path: new URL("libkeisan_bg.wasm", import.meta.url),
+    });
     const keisan = new Keisan();
-    keisan.registerPlugins({ datetime, unit, percent, currency });
+    keisan.setLogLevel("debug");
+
+    const plugins = [
+      "./plugins/datetime.js",
+      "./plugins/unit.js",
+      "./plugins/percent.js",
+      "./plugins/currency.js",
+    ];
+    await Promise.all(
+      plugins.map(async (p) => {
+        const res = await fetch(p);
+        const content = await res.text();
+        keisan.addPlugin(p, content);
+      }),
+    );
+
     this.setState({ keisan });
   };
 
-  componentDidMount = () => {
+  componentDidMount = async () => {
     try {
-      this.initWasm();
+      await this.initWasm();
       this.setState({ loading: false });
     } catch (error) {
       console.error("Error initializing:", error);
@@ -54,9 +67,11 @@ class App extends Component {
     this.throttleTimeout = setTimeout(() => {
       const { keisan } = this.state;
 
-      const { values, errors } = keisan.evaluate(input);
-      const results = values.map((value, i) => {
-        return { type: errors[i] ? "error" : "result", value };
+      const results = keisan.multiEval(input).map((res) => {
+        const { output, success } = res;
+        const ret = { type: success ? "result" : "error", value: output };
+        res.free();
+        return ret;
       });
 
       this.setState({ results });

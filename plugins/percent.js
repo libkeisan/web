@@ -1,0 +1,5 @@
+var plugin=(()=>{var l=Object.defineProperty;var c=Object.getOwnPropertyDescriptor;var p=Object.getOwnPropertyNames;var f=Object.prototype.hasOwnProperty;var I=(n,e)=>{for(var t in e)l(n,t,{get:e[t],enumerable:!0})},o=(n,e,t,r)=>{if(e&&typeof e=="object"||typeof e=="function")for(let u of p(e))!f.call(n,u)&&u!==t&&l(n,u,{get:()=>e[u],enumerable:!(r=c(e,u))||r.enumerable});return n};var a=n=>o(l({},"__esModule",{value:!0}),n);var s={};I(s,{default:()=>i});var _=(n,e)=>{let t=n.filter(r=>r.type==="NUMBER").map(r=>r.value);if(t.length===1){if(!e)return null;let r=t[0];return r.is_percent=!0,{type:"NUMBER",value:r}}if(t.length===2){let r=t[0],u=t[1];return{type:"NUMBER",value:{value:r.value/u.value,is_percent:e,merged_minus:!1}}}return null},i={rules:[`
+      NUMBER I_AS I_% I_OF NUMBER -> percent_to
+      NUMBER (I_TO | I_AS | I_IN) I_% -> percent_to
+      NUMBER I_IS NUMBER I_OF I_WHAT -> percent_of
+    `],action:(n,e)=>{let t;return n==="percent_to"&&(t=_(e,!0)),n==="percent_of"&&(t=_(e,!1)),t?[t]:null}};return a(s);})();
